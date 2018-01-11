@@ -1,50 +1,16 @@
 plugins {
     id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id "com.palantir.docker" version "0.17.2"
 }
 
 group='jp.co.biglobe'
 version='1.0'
 
-apply plugin: 'groovy'
+// 依存ライブラリの設定
+apply from: file("${rootProject.rootDir}/etc/gradle/library.gradle")
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
+// Dockerタスクの設定
+apply from: file("${rootProject.rootDir}/etc/gradle/docker.gradle")
 
-ext {
-    lombokVersion = '1.16.14'
-    groovyVersion = '2.4.7'
-
-    springBootVersion = '1.5.9.RELEASE'
-
-    spockVersion = '1.1-groovy-2.4'
-}
-
-dependencies {
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-
-
-    compile "org.springframework.boot:spring-boot-starter:${springBootVersion}"
-
-    // DBを使うときはここをコメントアウト
-//    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
-//    runtime "com.h2database:h2:1.4.196"
-
-
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile "org.spockframework:spock-spring:${spockVersion}"
-
-    // Springのコントローラテストで必要
-    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-
-    // クラスのモックテスト
-    testCompile "cglib:cglib-nodep:3.2.5"
-}
-
-task wrapper(type: Wrapper) {
-}
+// Gradleラッパータスクの設定
+apply from: file("${rootProject.rootDir}/etc/gradle/wrapper.gradle")

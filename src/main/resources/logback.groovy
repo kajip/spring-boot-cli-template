@@ -26,7 +26,6 @@ appender("STDOUT", ConsoleAppender) {
 }
 
 // ログレベル設定
-// catalina.out が肥大化するので、標準出力へのログ出力は無効化
 root(DEFAULT_LOG_LEVEL, ["STDOUT"])
 
 logger("jp.co.biglobe", APPLICATION_LOG_LEVEL)

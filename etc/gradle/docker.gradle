@@ -1,0 +1,8 @@
+// Dockerタスクの設定
+docker {
+    name "${rootProject.name}"
+    tags "${rootProject.version}", 'latest'
+    dockerfile file("${rootProject.rootDir}/etc/docker/Dockerfile")
+    files jar.archivePath
+    buildArgs(['JAR_FILE': "${jar.archiveName}"])
+}
