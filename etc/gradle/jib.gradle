@@ -1,0 +1,52 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+// Dockerタスクの設定
+jib {
+  // ベースイメージを変更したい場合はここを変更する
+  // from {
+  //   image = "openjdk:8-jdk-alpine"
+  // }
+  // 出力先のDockerイメージのレポジトリ
+  to {
+    image = "$imageRepositoryUrl:$project.version"
+  }
+
+  container {
+    jvmFlags = [
+      '-Xms64M',
+      '-Xmx64M',
+      '-Xss1M'
+    ]
+    ports = [
+        springBootPort
+    ]
+    labels = [
+        "maintainer": jibMaintainer,
+
+        // Dockerのラベルは、標準化が進んでいるらしいので乗っかる
+        // https://github.com/opencontainers/image-spec/blob/master/annotations.md
+        "org.opencontainers.image.created": ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+        "org.opencontainers.image.authors": jibMaintainer,
+        // "org.opencontainers.image.url": "none"
+        // "org.opencontainers.image.documentation": "none"
+        // "org.opencontainers.image.source": jibVcsUrl,
+        "org.opencontainers.image.version": project.version,
+        // "org.opencontainers.image.revision": System.getenv()['CODEBUILD_RESOLVED_SOURCE_VERSION'],
+        "org.opencontainers.image.title": project.name
+//        "org.opencontainers.image.description": description
+    ]
+    // 環境変数を使って、spring.properties を上書き。
+    // Docker化を進めるのであれば、パラメータ定義は、application.yml ではなく、環境変数に
+    // 寄せてDockerコンテナ側に記載するようにし、アプリと環境をソースからも分離したほうが良い
+    environment = [
+        "SPRING_PROFILES_ACTIVE": "default",
+        "SERVER_PORT": springBootPort
+
+        // データソース設定（本番機、評価機の設定は書かない！）
+        // "SPRING_DATASOURCE_URL": "jdbc:h2:./data/.test;MODE=ORACLE",
+        // "SPRING_DATASOURCE_USERNAME": "sa",
+        // "SPRING_DATASOURCE_PASSWORD": ""
+    ]
+  }
+}
